@@ -14,7 +14,7 @@ set CURRENT_DATE=%date:~10,4%%date:~4,2%%date:~7,2%
 set BACKUP_FILE=%BACKUP_DIR%\backup_%CURRENT_DATE%.sql
 set LOG_FILE=%BACKUP_DIR%\backup_log.txt
 
-echo Script started at %time% on %date% >> %LOG_FILE%
+echo Backup script started at %time% on %date% >> %LOG_FILE%
 
 echo Checking database connection...
 mysql -u%MYSQL_USER% -p%MYSQL_PASSWORD% -h%MYSQL_HOST% -e "SELECT 1" > nul 2>> %LOG_FILE%
@@ -27,18 +27,20 @@ if %errorlevel% neq 0 (
     echo Database connection successful.
 )
 
-echo Running command: mysqldump -u%MYSQL_USER% -p******** -h%MYSQL_HOST% %MYSQL_DATABASE% > %BACKUP_FILE% 2>> %LOG_FILE%
-mysqldump -u%MYSQL_USER% -p%MYSQL_PASSWORD% -h%MYSQL_HOST% %MYSQL_DATABASE% > %BACKUP_FILE% 2>> %LOG_FILE%
+echo Running command: mysqldump -u%MYSQL_USER% -p******** -h%MYSQL_HOST% --databases %MYSQL_DATABASE% > %BACKUP_FILE% 2>> %LOG_FILE%
+mysqldump -u%MYSQL_USER% -p%MYSQL_PASSWORD% -h%MYSQL_HOST% --databases %MYSQL_DATABASE% > %BACKUP_FILE% 2>> %LOG_FILE%
 set "EXIT_CODE=%errorlevel%"
 
 if %EXIT_CODE% equ 0 (
     echo MySQL backup completed successfully.
 ) else (
     echo Error: MySQL backup failed with exit code %EXIT_CODE%.
+    echo Script completed with errors at %time% on %date% >> %LOG_FILE%
+    pause
+    exit /b 1
 )
 
-echo Script completed at %time% on %date% >> %LOG_FILE%
-
+echo Backup script completed at %time% on %date% >> %LOG_FILE%
 pause
 exit /b 0
 
