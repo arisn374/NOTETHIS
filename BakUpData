@@ -1,0 +1,49 @@
+@echo off
+
+set "CONFIG_FILE=config.txt"
+if not exist "%CONFIG_FILE%" (
+    echo Error: Configuration file not found.
+    pause
+    exit /b 1
+)
+
+call :readConfig
+
+set BACKUP_DIR=%CONFIG_BACKUP_DIR%
+set CURRENT_DATE=%date:~10,4%%date:~4,2%%date:~7,2%
+set BACKUP_FILE=%BACKUP_DIR%\backup_%CURRENT_DATE%.sql
+set LOG_FILE=%BACKUP_DIR%\backup_log.txt
+
+echo Script started at %time% on %date% >> %LOG_FILE%
+
+echo Checking database connection...
+mysql -u%MYSQL_USER% -p%MYSQL_PASSWORD% -h%MYSQL_HOST% -e "SELECT 1" > nul 2>> %LOG_FILE%
+if %errorlevel% neq 0 (
+    echo Error: Unable to connect to the database. Check your MySQL credentials and server availability.
+    echo Script completed with errors at %time% on %date% >> %LOG_FILE%
+    pause
+    exit /b 1
+) else (
+    echo Database connection successful.
+)
+
+echo Running command: mysqldump -u%MYSQL_USER% -p******** -h%MYSQL_HOST% %MYSQL_DATABASE% > %BACKUP_FILE% 2>> %LOG_FILE%
+mysqldump -u%MYSQL_USER% -p%MYSQL_PASSWORD% -h%MYSQL_HOST% %MYSQL_DATABASE% > %BACKUP_FILE% 2>> %LOG_FILE%
+set "EXIT_CODE=%errorlevel%"
+
+if %EXIT_CODE% equ 0 (
+    echo MySQL backup completed successfully.
+) else (
+    echo Error: MySQL backup failed with exit code %EXIT_CODE%.
+)
+
+echo Script completed at %time% on %date% >> %LOG_FILE%
+
+pause
+exit /b 0
+
+:readConfig
+for /f "tokens=1,* delims==" %%A in (%CONFIG_FILE%) do (
+    set "%%A=%%B"
+)
+exit /b 0
