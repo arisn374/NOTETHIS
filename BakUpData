@@ -78,3 +78,35 @@ echo Size of %SQL_FILE% is %FILE_SIZE% bytes.
 
 pause
 
+#!/bin/bash
+
+MYSQL_USER="your_username"
+MYSQL_PASSWORD="your_password"
+MYSQL_DATABASE="your_database"
+OUTPUT_DIR="/path/to/backup/directory"
+
+# Set the maximum size for each backup file (20MB in this example)
+MAX_FILE_SIZE_MB=20
+MAX_FILE_SIZE=$((MAX_FILE_SIZE_MB * 1024 * 1024))
+
+# Set the filename prefix
+FILENAME_PREFIX="backup"
+
+# Set the date format for the backup files
+DATE_FORMAT=$(date +"%Y%m%d%H%M%S")
+
+# Generate the output file name
+OUTPUT_FILE="$OUTPUT_DIR/$FILENAME_PREFIX"_"$DATE_FORMAT.sql.gz"
+
+# Perform the MySQL backup
+mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATABASE | gzip > $OUTPUT_FILE
+
+# Split the backup into multiple files if it exceeds the maximum size
+split --line-bytes=$MAX_FILE_SIZE $OUTPUT_FILE "$OUTPUT_DIR/$FILENAME_PREFIX"_"$DATE_FORMAT"_
+
+# Remove the original backup file
+rm $OUTPUT_FILE
+
+echo "Backup completed successfully."
+
+
