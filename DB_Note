@@ -1,0 +1,16 @@
+@echo off
+
+REM Set MySQL connection details
+set MYSQL_USER=your_username
+set MYSQL_PASSWORD=your_password
+set MYSQL_HOST=your_host
+set MYSQL_DATABASE=your_database
+
+REM Set old and new table names
+set OLD_TABLE_NAME=old_table_name
+set NEW_TABLE_NAME=new_table_name
+
+REM Use mysql command to execute SQL statements
+mysql -u%MYSQL_USER% -p%MYSQL_PASSWORD% -h%MYSQL_HOST% -D%MYSQL_DATABASE% -e "RENAME TABLE %OLD_TABLE_NAME% TO %NEW_TABLE_NAME%;"
+
+echo Table %OLD_TABLE_NAME% renamed to %NEW_TABLE_NAME%.
