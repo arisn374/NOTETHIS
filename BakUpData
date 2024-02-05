@@ -154,3 +154,17 @@ for %%F in ("%SOURCE_FOLDER%\*.sql") do (
 echo Splitting files completed.
 pause
 exit /b 0
+------------------------------------------------------------------------------------------
+
+@echo off
+
+set "SQL_FILE=path\to\your\file.sql"
+set "LINE_COUNT=0"
+
+for /f %%A in ('type "%SQL_FILE%" ^| find /v /c ""') do set "LINE_COUNT=%%A"
+
+echo The number of lines in %SQL_FILE% is %LINE_COUNT%.
+
+pause
+ 
+------------------------------------------------------------------
