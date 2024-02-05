@@ -109,4 +109,48 @@ rm $OUTPUT_FILE
 
 echo "Backup completed successfully."
 
+-------------------------------------------------------------------------------------------
+@echo off
+setlocal enabledelayedexpansion
 
+set "SOURCE_FOLDER=path\to\your\folder"
+set "OUTPUT_FOLDER=path\to\output\folder"
+set "MAX_FILE_SIZE_MB=10"
+set "MAX_FILE_SIZE_BYTES=10485760"  REM 10MB in bytes
+
+if not exist "%SOURCE_FOLDER%" (
+    echo Error: Source folder not found.
+    exit /b 1
+)
+
+if not exist "%OUTPUT_FOLDER%" (
+    mkdir "%OUTPUT_FOLDER%"
+)
+
+for %%F in ("%SOURCE_FOLDER%\*.sql") do (
+    set "FILE_SIZE=0"
+    set "FILE=%OUTPUT_FOLDER%\%%~nF_part_1.sql"
+    type nul > "!FILE!"
+
+    for /f %%A in ('dir /-C /b "%%F"') do set "FILE_SIZE=%%~zA"
+    set /a "FILES=1"
+
+    for /f "tokens=* delims=" %%A in ('type "%%F" ^| find /v /c ""') do set "LINE_COUNT=%%A"
+
+    for /f "tokens=* delims=" %%A in ('type "%%F"') do (
+        set /a "FILE_SIZE+=1"
+        set /a "PERCENT=FILE_SIZE*100/LINE_COUNT"
+        if !PERCENT! geq 10 (
+            set /a "PERCENT=0"
+            set /a "FILES+=1"
+            set "FILE=%OUTPUT_FOLDER%\%%~nF_part_!FILES!.sql"
+            type nul > "!FILE!"
+        )
+        echo !PERCENT!%%^>!FILE!
+        echo %%A>> "!FILE!"
+    )
+)
+
+echo Splitting files completed.
+pause
+exit /b 0
