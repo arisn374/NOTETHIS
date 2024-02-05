@@ -67,3 +67,14 @@ if %errorlevel% equ 0 (
 
 pause
 
+
+@echo off
+
+set "SQL_FILE=path\to\your\file.sql"
+
+for %%I in ("%SQL_FILE%") do set "FILE_SIZE=%%~zI"
+
+echo Size of %SQL_FILE% is %FILE_SIZE% bytes.
+
+pause
+
