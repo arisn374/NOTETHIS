@@ -49,3 +49,21 @@ for /f "tokens=1,* delims==" %%A in (%CONFIG_FILE%) do (
     set "%%A=%%B"
 )
 exit /b 0
+
+
+
+
+@echo off
+
+REM Run your command here
+your_command_here
+
+REM Check the errorlevel
+if %errorlevel% equ 0 (
+    echo Command executed successfully.
+) else (
+    echo Error: Command failed with exit code %errorlevel%.
+)
+
+pause
+
