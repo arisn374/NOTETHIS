@@ -3,16 +3,16 @@ setlocal enabledelayedexpansion
 
 set "inputFile=your_input_file.txt"
 set "outputPrefix=output_file_prefix"
-set "minFileSize=9000000"  REM 9 MB in bytes
 set "maxFileSize=10000000" REM 10 MB in bytes
 
 set "outputFile="
 set "currentSize=0"
 set "fileCount=1"
 
-for /F "delims=" %%A in ('findstr /n "^" "%inputFile%"') do (
-    set "line=%%A"
-    set "line=!line:*:=!"
+for /F %%A in ('powershell -command "(Get-Item \"%inputFile%\").length"') do set "totalFileSize=%%A"
+
+for /F "tokens=1,* delims=:" %%A in ('findstr /N "^" "%inputFile%"') do (
+    set "line=%%B"
     set /A "currentSize+=1"
 
     if !currentSize! gtr !maxFileSize! (
@@ -30,7 +30,6 @@ for /F "delims=" %%A in ('findstr /n "^" "%inputFile%"') do (
 
 echo Splitting completed.
 pause
-
 
 ------------------------------------------------
 @echo off
