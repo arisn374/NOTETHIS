@@ -1,4 +1,39 @@
 @echo off
+setlocal enabledelayedexpansion
+
+set "inputFile=your_input_file.txt"
+set "outputPrefix=output_file_prefix"
+set "minFileSize=9000000"  REM 9 MB in bytes
+set "maxFileSize=10000000" REM 10 MB in bytes
+
+set "outputFile="
+set "currentSize=0"
+set "fileCount=1"
+
+for /F "delims=" %%A in ('findstr /n "^" "%inputFile%"') do (
+    set "line=%%A"
+    set "line=!line:*:=!"
+    set /A "currentSize+=1"
+
+    if !currentSize! gtr !maxFileSize! (
+        set /A "currentSize=1"
+        set "outputFile=!outputPrefix!!fileCount!.txt"
+        set /A "fileCount+=1"
+    )
+
+    echo !line! >> "!outputFile!"
+
+    if !currentSize! gtr !maxFileSize! (
+        echo Created: !outputFile!
+    )
+)
+
+echo Splitting completed.
+pause
+
+
+------------------------------------------------
+@echo off
 
 REM Set MySQL connection parameters
 set MYSQL_HOST=your_mysql_host
