@@ -31,6 +31,57 @@ for /L %%i in (1, 1, %ITERATIONS%) do (
         echo Error: Failed to create backup. Error Code: %ERRORLEVEL%
     ) else (
         echo Backup completed successfully.
+
+        REM Check the file size and split if it exceeds the limit
+        for %%F in ("%CURRENT_BACKUP_FILE%") do (
+            if %%~zF gtr %MAX_FILE_SIZE% (
+                echo File size exceeds limit. Splitting into a new file.
+                set /a ITERATIONS+=1
+                set CURRENT_BACKUP_FILE=%BASE_BACKUP_FILE%_%%i_part2.sql
+            )
+        )
+
+        echo %TIMESTAMP% - Backup completed successfully. >> backup_log.txt
+    )
+)
+
+pause
+
+
+-------------------------------------------------------------------------------------------
+@echo off
+
+REM Set MySQL connection parameters
+set MYSQL_HOST=your_mysql_host
+set MYSQL_PORT=your_mysql_port
+set MYSQL_USER=your_mysql_username
+set MYSQL_PASSWORD=your_mysql_password
+set DATABASE_NAME=your_database_name
+set TABLE_NAME=your_table_name
+
+REM Set the base backup file name and path
+set TIMESTAMP=%DATE:~10,4%_%DATE:~4,2%_%DATE:~7,2%_%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%
+set BASE_BACKUP_FILE=%TIMESTAMP%_%TABLE_NAME%
+
+REM Set the maximum file size in bytes (10 MB)
+set MAX_FILE_SIZE=10485760
+
+REM Set the number of iterations (adjust as needed)
+set ITERATIONS=5
+
+REM Loop through the backup process
+for /L %%i in (1, 1, %ITERATIONS%) do (
+    set CURRENT_BACKUP_FILE=%BASE_BACKUP_FILE%_%%i.sql
+    echo Backing up to file: %CURRENT_BACKUP_FILE%
+    
+    REM Create the backup using mysqldump with split files
+    mysqldump -h %MYSQL_HOST% -P %MYSQL_PORT% -u %MYSQL_USER% -p%MYSQL_PASSWORD% --skip-opt --skip-comments --single-transaction --quick %DATABASE_NAME% %TABLE_NAME% --result-file="%CURRENT_BACKUP_FILE%" --where="1=1 LIMIT 10000000"
+
+    REM Check for errors during mysqldump
+    if %ERRORLEVEL% neq 0 (
+        echo Error: Failed to create backup. Error Code: %ERRORLEVEL%
+    ) else (
+        echo Backup completed successfully.
         echo %TIMESTAMP% - Backup completed successfully. >> backup_log.txt
     )
 )
