@@ -24,3 +24,29 @@ class Program
         }
     }
 }
+
+
+using System;
+using System.Runtime.Caching;
+
+class Program
+{
+    static void Main()
+    {
+        // สร้าง MemoryCache
+        MemoryCache cache = new MemoryCache("MyCache");
+
+        // กำหนดเวลาที่ต้องการให้แคชหมดอายุเป็น 23:00 ของแต่ละวัน
+        CacheItemPolicy policy = new CacheItemPolicy
+        {
+            AbsoluteExpiration = DateTime.Today.AddHours(23) // 23:00 ของวันนี้
+        };
+
+        // เพิ่มค่าลงในแคชพร้อมกับ Policy
+        cache.Set("myKey", "myValue", policy);
+
+        // ดึงค่าจากแคช
+        object value = cache.Get("myKey");
+        Console.WriteLine(value); // แสดงผล: myValue
+    }
+}
