@@ -1,0 +1,26 @@
+using System;
+using System.Runtime.Caching;
+
+class Program
+{
+    static void Main()
+    {
+        // สร้าง MemoryCache
+        MemoryCache cache = new MemoryCache("MyCache");
+
+        // เพิ่มค่าลงในแคช
+        cache.Add("myKey", "myValue", DateTimeOffset.Now.AddMinutes(30));
+
+        // ดึงค่าจากแคช
+        object value = cache.Get("myKey");
+
+        if (value != null)
+        {
+            Console.WriteLine("ค่าในแคชปัจจุบัน: " + value); // แสดงผล: myValue
+        }
+        else
+        {
+            Console.WriteLine("ไม่พบค่าในแคช");
+        }
+    }
+}
