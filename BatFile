@@ -1,0 +1,25 @@
+BAT READ SQL FILE  
+
+@echo off
+
+rem Set your database connection information
+set SERVER=myServer
+set DATABASE=myDatabase
+set USERNAME=myUsername
+set PASSWORD=myPassword
+
+rem Specify the path to your SQL query file
+set SQL_FILE=query.sql
+
+rem Check if the SQL file exists
+if not exist %SQL_FILE% (
+    echo SQL file not found: %SQL_FILE%
+    exit /b
+)
+
+rem Read the contents of the SQL file into a variable
+set SQL_QUERY=
+for /f "tokens=*" %%i in (%SQL_FILE%) do set SQL_QUERY=!SQL_QUERY! %%i
+
+rem Execute the SQL query using sqlcmd
+sqlcmd -S %SERVER% -d %DATABASE% -U %USERNAME% -P %PASSWORD% -Q "!SQL_QUERY!"
