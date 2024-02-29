@@ -1,1 +1,22 @@
-B
+@echo off
+
+REM Set variables
+set SERVERNAME=YourSQLServerName
+set USERNAME=YourUsername
+set PASSWORD=YourPassword
+set DATABASENAME=YourDatabaseName
+set BACKUPFOLDER=C:\BackupFolder
+set BACKUPFILENAME=%DATABASENAME%_%DATE:~10,4%%DATE:~4,2%%DATE:~7,2%_%TIME:~0,2%%TIME:~3,2%%TIME:~6,2%.bak
+
+REM Create backup folder if it doesn't exist
+if not exist "%BACKUPFOLDER%" mkdir "%BACKUPFOLDER%"
+
+REM Backup the database using SQLCMD
+sqlcmd -S %SERVERNAME% -U %USERNAME% -P %PASSWORD% -Q "BACKUP DATABASE [%DATABASENAME%] TO DISK='%BACKUPFOLDER%\%BACKUPFILENAME%'"
+
+REM Check if backup was successful
+if %ERRORLEVEL% NEQ 0 (
+    echo Error: Database backup failed.
+) else (
+    echo Database backup completed successfully.
+)
