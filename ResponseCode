@@ -1,0 +1,11 @@
+RESPONSECODE RESPONSEDESCRIPTION
+E001 ขออภัยค่ะ ะบบสามารกทำรายการได้ในช่างเวลา 06.30- 23.00 น.
+E003 บริการนี้ยังไม่พร้อมใช้งาน
+E101 สัญญา RL1 Not Active
+E102 Status card Not Active
+E103 Contract Status Not Nommal
+E104 Age Over 60 Year
+E104 Age more than 65 years or birthday less more than 01/11/2506
+E106 ลูกค้เป็น Blacklist
+E108 วงเงินที่ใช้ได้น้อยกว่ายอดเงินที่ถอน
+E111 ไม่พบข้อมลลูกค้า(CSMS11)
