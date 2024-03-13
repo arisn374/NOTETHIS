@@ -1,0 +1,41 @@
+Read From another 
+
+using System;
+using System.IO;
+using System.Net;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // UNC path of the file on the shared drive
+        string filePath = @"\\Server\Share\file.txt";
+
+        // User credentials for accessing the shared drive
+        string username = "username";
+        string password = "password";
+
+        try
+        {
+            // Create a network credential object
+            NetworkCredential credential = new NetworkCredential(username, password);
+
+            // Create a new instance of WebClient with the provided credentials
+            WebClient client = new WebClient();
+            client.Credentials = credential;
+
+            // Download the file from the shared drive
+            byte[] fileBytes = client.DownloadData(filePath);
+
+            // Convert the byte array to a string (assuming the file is text-based)
+            string fileContent = System.Text.Encoding.UTF8.GetString(fileBytes);
+
+            // Output the file content
+            Console.WriteLine(fileContent);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+}
